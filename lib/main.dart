@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +18,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-
       ),
       home: const MainScreen(),
     );
@@ -33,10 +34,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // List of screens to display in the navigation bar
   final List<Widget> _screens = [
     const HomeScreen(),
     const StudentTableScreen(),
+    const StarWarsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -59,6 +60,10 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.contacts),
             label: 'Contacts',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.get_app),
+            label: 'GET',
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.deepPurple,
@@ -80,7 +85,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Image.network(
-          'https://static.vecteezy.com/system/resources/previews/034/950/530/non_2x/ai-generated-small-house-with-flowers-on-transparent-background-image-png.png', // Replace with your logo URL or asset
+          'https://static.vecteezy.com/system/resources/previews/034/950/530/non_2x/ai-generated-small-house-with-flowers-on-transparent-background-image-png.png',
           width: 150,
           height: 150,
         ),
@@ -150,6 +155,83 @@ class StudentTableScreen extends StatelessWidget {
         ),
         DataCell(Text(matricula)),
       ],
+    );
+  }
+}
+
+class StarWarsScreen extends StatefulWidget {
+  const StarWarsScreen({super.key});
+
+  @override
+  _StarWarsScreenState createState() => _StarWarsScreenState();
+}
+
+class _StarWarsScreenState extends State<StarWarsScreen> {
+  List<dynamic> _characters = [];
+  bool _isLoading = false; // Indicador de carga
+
+  Future<void> _fetchStarWarsCharacters() async {
+    setState(() {
+      _isLoading = true; // Mostrar el spinner mientras se cargan los datos
+    });
+
+    final url = Uri.parse('https://swapi.dev/api/people/');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _characters = data['results'];
+        _isLoading = false; // Ocultar el spinner cuando los datos estén listos
+      });
+    } else {
+      throw Exception('Failed to load characters');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Star Wars Characters'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _fetchStarWarsCharacters,
+              child: const Text('Personaje de Star Wars'),
+            ),
+            const SizedBox(height: 20),
+            _isLoading
+                ? const CircularProgressIndicator() // Spinner mientras se cargan los datos
+                : _characters.isNotEmpty
+                    ? Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                              DataColumn(label: Text('Gender', style: TextStyle(fontWeight: FontWeight.bold))),
+                              DataColumn(label: Text('Height', style: TextStyle(fontWeight: FontWeight.bold))),
+                              DataColumn(label: Text('Skin Color', style: TextStyle(fontWeight: FontWeight.bold))),
+                            ],
+                            rows: _characters.map((character) {
+                              return DataRow(cells: [
+                                DataCell(Text(character['name'])),
+                                DataCell(Text(character['gender'])),
+                                DataCell(Text(character['height'])),
+                                DataCell(Text(character['skin_color'])),
+                              ]);
+                            }).toList(),
+                          ),
+                        ),
+                      )
+                    : const Text('No hay personajes para mostrar'), // Mensaje si no hay datos
+          ],
+        ),
+      ),
     );
   }
 }
