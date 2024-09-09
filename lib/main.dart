@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        
+
       ),
       home: const MainScreen(),
     );
@@ -126,10 +126,9 @@ class StudentTableScreen extends StatelessWidget {
                   DataColumn(label: Text('Matricula', style: TextStyle(fontWeight: FontWeight.bold))),
                 ],
                 rows: [
-                  _buildDataRow('Eduardo', '9611272389', '213377'),
-                  _buildDataRow('Maria José', '9631333708', '987654'),
-                  _buildDataRow('Manuel', '9612458375', '112233'),
-                  _buildDataRow('Diego', '9613280361', '445566'),
+                  _buildDataRow('Darinel', '9613021060', '221192'),
+                  _buildDataRow('Ulises', 'number', '----'),
+                  _buildDataRow('Merlin', 'number', '----'),
                 ],
               ),
             ),
