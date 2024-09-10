@@ -133,7 +133,7 @@ class StudentTableScreen extends StatelessWidget {
                 rows: [
                   _buildDataRow('Darinel', '9613021060', '221192'),
                   _buildDataRow('Ulises', 'number', '213691'),
-                  _buildDataRow('Merlin', 'number', '----'),
+                  _buildDataRow('Merlin', '9515271070', '221255'),
                 ],
               ),
             ),
