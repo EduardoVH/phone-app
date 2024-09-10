@@ -12,12 +12,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        
       ),
+      debugShowCheckedModeBanner: false,
       home: const MainScreen(),
     );
   }
@@ -80,7 +79,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Image.network(
-          'https://static.vecteezy.com/system/resources/previews/034/950/530/non_2x/ai-generated-small-house-with-flowers-on-transparent-background-image-png.png', // Replace with your logo URL or asset
+          'https://via.placeholder.com/150', // Replace with your logo URL or asset
           width: 150,
           height: 150,
         ),
@@ -100,6 +99,16 @@ class StudentTableScreen extends StatelessWidget {
       throw 'Could not launch $phoneNumber';
     }
   }
+
+void _sendSMS(String phoneNumber) async {
+  final Uri smsUri = Uri(scheme: 'sms', path: phoneNumber);
+  if (await canLaunchUrl(smsUri)) {
+    await launchUrl(smsUri);
+  } else {
+    print('Could not send SMS to $phoneNumber');
+    throw 'Could not send SMS to $phoneNumber';
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -124,10 +133,11 @@ class StudentTableScreen extends StatelessWidget {
                   DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))),
                   DataColumn(label: Text('Phone Number', style: TextStyle(fontWeight: FontWeight.bold))),
                   DataColumn(label: Text('Matricula', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Send Message', style: TextStyle(fontWeight: FontWeight.bold))),
                 ],
                 rows: [
                   _buildDataRow('Eduardo', '9611272389', '213377'),
-                  _buildDataRow('Maria José', '9631333708', '987654'),
+                  _buildDataRow('Maria Jose', '9631333708', '987654'),
                   _buildDataRow('Manuel', '9612458375', '112233'),
                   _buildDataRow('Diego', '9613280361', '445566'),
                 ],
@@ -150,6 +160,12 @@ class StudentTableScreen extends StatelessWidget {
           ),
         ),
         DataCell(Text(matricula)),
+        DataCell(
+          IconButton(
+            icon: const Icon(Icons.sms, color: Colors.blue),
+            onPressed: () => _sendSMS(phoneNumber),
+          ),
+        ),
       ],
     );
   }
